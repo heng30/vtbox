@@ -1,0 +1,15 @@
+[package]
+name = "transcribe"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+whisper-rs = "0.10"
+reqwest = { version = "0.11", features = ["json", "socks"] }
+tokio = {version = "1.35", features = ["full"]}
+symphonia = {version = "0.5", features=["mp3"]}
+
+# [[bin]]
+# path="examples/usage_example.rs"
+# name="example"

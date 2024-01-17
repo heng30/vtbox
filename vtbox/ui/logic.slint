@@ -1,0 +1,59 @@
+import { SettingDialogConfig, Store } from "./store.slint";
+
+export struct Position {
+    x: length,
+    y: length,
+}
+
+export global Logic {
+    callback hide-window();
+    callback show-window();
+    callback window-position() -> Position;
+    callback update-position(int, int); // argument: position-x, position-y
+
+    callback show-message(string, string);
+    callback copy-to-clipboard(string);
+    callback handle-ok-cancel-dialog(string, string);
+
+    callback clean-cache();
+
+    callback setting-cancel();
+    callback setting-ok(SettingDialogConfig);
+
+    callback flush-account();
+    callback flush-activity();
+    callback switch-network(string, string); // argument: uuid, network
+
+    callback send-tx(string, string, string, string, string); // argument: uuid, password, receive-address, amount, feerate
+    callback broadcast-tx(string, string, string, string); // argument: network, tx-hex, send-amount-btc, fee
+
+    callback set-receive-address(string); // argument: address
+    callback address-book-add-item(string, string, string); // argument: name, address, network
+    callback address-book-delete-item(string); // argument: uuid
+    callback address-book-item-address(string) -> string; // argument: uuid
+
+    callback activity-delete-item(string); // argument: uuid
+
+    pure callback new-mnemonic() -> string;
+    callback new-account(string, string); // argument: password, mnemonic;
+    callback recover-account(string, string);  // argument: uuid, password
+    callback delete-account(string, string); // argument: uuid, password;
+    callback show-mnemonic(string, string); // argument: uuid, password;
+    pure callback mnemonic-word(string, int) -> string; // argument: mnemonic, index
+    mnemonic-word(mnemonic, index) => { return "none-" + index; }
+
+    callback handle-password-dialog(string, string, string); // argument: type, uuid, password
+
+    callback change-password(string, string, string); // argument: uuid, old password, new password
+
+    pure callback pretty-btc-price(string) -> string; // argument: price; return: format price
+    pretty-btc-price(price) => { return price; }
+
+    callback logout();
+    logout => {
+        Store.password-dialog-config.handle-type = "logout";
+        Store.password-dialog-config.handle-uuid = Store.account.uuid;
+        Store.password-dialog-config.show = true;
+    }
+}
+

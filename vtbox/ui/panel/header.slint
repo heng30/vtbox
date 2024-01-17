@@ -1,0 +1,130 @@
+import { Theme } from "../theme.slint";
+import { Store } from "../store.slint";
+import { Logic } from "../logic.slint";
+import { Util } from "../util.slint";
+import { Label } from "../base/label.slint";
+import { IconBtn } from "../base/icon-btn.slint";
+import { Position } from "../logic.slint";
+
+export component Header inherits Rectangle {
+    height: Theme.header-height;
+    background: Theme.lighter-border-color;
+
+    HorizontalLayout {
+        alignment: space-between;
+        padding-left: Theme.padding * 2;
+        padding-right: Theme.padding * 2;
+
+        VerticalLayout {
+            alignment: center;
+            HorizontalLayout {
+                spacing: Theme.spacing * 2;
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 0.85;
+                    icon: @image-url("../images/logout.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-logout;
+                    clicked => { Logic.logout(); }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size;
+                    icon: Store.account.network == "main" ? @image-url("../images/network.svg") : @image-url("../images/test-network.svg");
+                    tip-pos: "bottom";
+                    tip-text:  Store.account.network == "main" ? Store.translator.tip-main-network : Store.translator.tip-test-network;
+
+                    clicked => {
+                        Logic.switch-network(Store.account.uuid, Store.account.network == "main" ? "test" : "main");
+                    }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 0.8;
+                    icon: @image-url("../images/browser.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-browser;
+                    clicked => {
+                        Util.open-url(Util.blockstream-address-url(Store.account.network, Store.account.address));
+                    }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 0.7;
+                    icon: @image-url("../images/reset.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-flush;
+                    clicked => {
+                        Logic.show-message(Store.translator.flushing, "info");
+                        Logic.flush-account();
+                        Logic.flush-activity();
+                    }
+                }
+            }
+        }
+
+        // Rectangle{
+        //     background: red;
+
+        //     TouchArea {
+        //         property<Position> cache-pos;
+        //         property<Position> window-pos;
+
+        //         moved => {
+        //             self.window-pos = Logic.window-position();
+        //             Logic.update-position((self.window-pos.x + self.mouse-x - self.cache-pos.x) / 1px,
+        //                                   (self.window-pos.y + self.mouse-y - self.cache-pos.y) / 1px);
+        //             self.cache-pos.x = self.mouse-x;
+        //             self.cache-pos.y = self.mouse-y;
+        //         }
+
+        //         pointer-event(event) => {
+        //             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+        //                 self.cache-pos.x = self.pressed-x;
+        //                 self.cache-pos.y = self.pressed-y;
+        //             }
+        //         }
+        //     }
+        // }
+
+        VerticalLayout {
+            alignment: center;
+            HorizontalLayout {
+                spacing: Theme.spacing * 2;
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon: @image-url("../images/setting-fill.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-setting;
+                    clicked => {
+                        Store.setting-dialog-config.show = true;
+                    }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon: @image-url("../images/help.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-help;
+                    clicked => {
+                        Store.help-dialog.show = true;
+                    }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon: @image-url("../images/info-dark.svg");
+                    tip-pos: "bottom";
+                    tip-text: Store.translator.tip-about;
+                    clicked => {
+                        Store.about-dialog.show = true;
+                    }
+                }
+            }
+        }
+    }
+}

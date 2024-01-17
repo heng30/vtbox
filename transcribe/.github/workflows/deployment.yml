@@ -1,0 +1,25 @@
+name: Deployment
+
+on:
+  push:
+    tags: [ "v*" ]
+
+env:
+  CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}
+
+jobs:
+  Deploy:
+    name: Deploy-Crate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: bump-cargo-version
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref }}
+        run: |
+          sed -i "s/0.0.0/${RELEASE_TAG##*/\v}/g" Cargo.toml
+      - name: dry-run
+        run: cargo publish --dry-run --allow-dirty
+      - name: publish
+        run: cargo publish --allow-dirty

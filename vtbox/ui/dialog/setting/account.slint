@@ -1,0 +1,136 @@
+import { LineEdit } from "std-widgets.slint";
+import { Theme } from "../../theme.slint";
+import { Store } from "../../store.slint";
+import { Logic } from "../../logic.slint";
+import { Label } from "../../base/label.slint";
+import { Btn } from "../../base/btn.slint";
+
+export component Account inherits VerticalLayout {
+    property<length> btn-width: 100px;
+    property <length> label-width: Theme.default-label-width * 1.4;
+
+    in-out property max-feerate <=> max-feerate-lineedit.text;
+    in-out property max-fee-amount <=> max-fee-amount-lineedit.text;
+    in-out property max-send-amount <=> max-send-amount-lineedit.text;
+    in-out property skip-utxo-amount <=> skip-utxo-amount-lineedit.text;
+
+    VerticalLayout {
+        spacing: Theme.spacing * 4;
+        alignment: start;
+
+        HorizontalLayout {
+             Label {
+                width: label-width;
+                text: Store.translator.setting-dialog-account-skip-utxo-amount + ":";
+            }
+
+            skip-utxo-amount-lineedit := LineEdit {
+                input-type: number;
+            }
+        }
+
+        HorizontalLayout {
+             Label {
+                width: label-width;
+                text: Store.translator.setting-dialog-account-max-fee-amount + ":";
+            }
+
+            max-fee-amount-lineedit := LineEdit {
+                input-type: number;
+            }
+        }
+
+        HorizontalLayout {
+            Label {
+                width: label-width;
+                text: Store.translator.setting-dialog-account-max-feerate + ":";
+            }
+
+            max-feerate-lineedit := LineEdit {
+                input-type: number;
+            }
+        }
+
+        HorizontalLayout {
+            Label {
+                width: label-width;
+                text: Store.translator.setting-dialog-account-max-send-amount + ":";
+            }
+
+            max-send-amount-lineedit := LineEdit {
+                input-type: number;
+            }
+        }
+
+        VerticalLayout {
+            spacing: Theme.padding * 2;
+
+            HorizontalLayout {
+                alignment: space-around;
+
+                Btn {
+                    width: 40%;
+                    bg-color: Theme.info-color;
+                    text-color: Theme.basic-black-color;
+                    text: Store.translator.setting-dialog-account-change-password;
+                    icon: @image-url("../../images/edit.svg");
+                    clicked => {
+                        Store.setting-dialog-config.show = false;
+                        Store.is-show-change-account-password-dialog = true;
+                    }
+                }
+
+                Btn {
+                    width: 40%;
+                    text-color: Theme.basic-black-color;
+                    text: Store.translator.setting-dialog-account-show-mnemonic;
+                    icon: @image-url("../../images/eye.svg");
+                    clicked => {
+                        Store.setting-dialog-config.show = false;
+
+                        Store.password-dialog-config.handle-type = "show-mnemonic";
+                        Store.password-dialog-config.handle-uuid = Store.account.uuid;
+                        Store.password-dialog-config.show = true;
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                alignment: space-around;
+
+                Btn {
+                    width: 40%;
+                    bg-color: Theme.warning-color;
+                    text-color: Theme.basic-black-color;
+                    text: Store.translator.setting-dialog-account-recover;
+                    icon: @image-url("../../images/recover.svg");
+                    clicked => {
+                        Store.setting-dialog-config.show = false;
+
+
+                        Store.password-dialog-config.handle-type = "recover-account";
+                        Store.password-dialog-config.handle-uuid = Store.account.uuid;
+                        Store.password-dialog-config.show = true;
+                    }
+                }
+
+                Btn {
+                    width: 40%;
+                    bg-color: Theme.danger-color;
+                    text-color: Theme.basic-black-color;
+                    text: Store.translator.setting-dialog-account-delete;
+                    icon: @image-url("../../images/delete-light.svg");
+                    clicked => {
+                        Store.setting-dialog-config.show = false;
+
+
+                        Store.password-dialog-config.handle-type = "delete-account";
+                        Store.password-dialog-config.handle-uuid = Store.account.uuid;
+                        Store.password-dialog-config.show = true;
+                    }
+                }
+
+            }
+        }
+    }
+}
