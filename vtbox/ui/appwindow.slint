@@ -1,32 +1,15 @@
 import { Theme } from "./theme.slint";
-import { Logic } from "./logic.slint";
-import { Position } from "./logic.slint";
+import { Logic, Position } from "./logic.slint";
 import { BaseLogic } from "./base/logic.slint";
 import { Store } from "./store.slint";
-import { AddressBookItem } from "./store.slint";
-import { ActivityItem } from "./store.slint";
-import { TxDetail } from "./store.slint";
-import { Account } from "./store.slint";
 import { Util } from "./util.slint";
-import { Translator } from "./translator.slint";
-import { Store } from "./store.slint";
-import { MDItem } from "./base/data.slint";
 import { Blanket } from "./base/blanket.slint";
 import { Panel } from "./panel/panel.slint";
 import { Message } from "./base/message.slint";
 import { SettingDialog } from "./dialog/setting/dialog.slint";
-import { TxDetailDialog } from "./dialog/tx-detail.slint";
-import { PasswordDialog } from "./dialog/password.slint";
-import { ChangePasswordDialog } from "./dialog/change-password.slint";
-import { AddressBookAddItemDialog } from "./dialog/address-book-add-item.slint";
-import { AddressBookQrcodeDialog } from "./dialog/address-book-qrcode.slint";
-import { AddressBookDialog } from "./dialog/address-book.slint";
-import { NewAccountDialog } from "./dialog/new-account.slint";
-import { ShowMnemonicDialog } from "./dialog/show-mnemonic.slint";
 import { AboutDialog } from "./dialog/about.slint";
 import { HelpDialog } from "./dialog/help.slint";
 import { OkCancelDialog } from "./dialog/ok-cancel.slint";
-import { IconBtn } from "./base/icon-btn.slint";
 
 export component AppWindow inherits Window {
     default-font-size: Theme.default-font-size;
@@ -35,15 +18,10 @@ export component AppWindow inherits Window {
     height: Theme.default-height;
     background: Theme.base-background;
     icon: @image-url("./images/icon.png");
-    forward-focus: password-dialog;
-    title: "Bitbox";
+    forward-focus: fscope;
+    title: "vtbox";
 
     property<length> dialog-max-width: Math.min(root.width * 0.95, Theme.dialog-max-width);
-
-    in-out property new-account-dialog-type-index <=> new_account_dialog.type-index;
-    in-out property receive-address <=> panel.receive-address;
-    in-out property send-amount <=> panel.send-amount;
-    in-out property feerate <=> panel.feerate;
 
     init => { }
 
@@ -69,9 +47,7 @@ export component AppWindow inherits Window {
             accept
         }
 
-        HorizontalLayout {
-            panel := Panel { }
-        }
+        panel := Panel { }
 
         modal := Rectangle {
             function hide() {
@@ -79,46 +55,10 @@ export component AppWindow inherits Window {
                     Store.about-dialog.show = false;
                 } else if (help-dialog.visible) {
                     Store.help-dialog.show = false;
-                } else if (address-book-add-item-dialog.visible) {
-                    Store.is-show-address-book-add-item-dialog = false;
-                } else if (address-book-qrcode-dialog.visible) {
-                    Store.is-show-address-book-qrcode-dialog = false;
-                } else if (address-book-dialog.visible) {
-                    Store.is-show-address-book-dialog = false;
-                } else if (show-mnemonic-dialog.visible) {
-                    Store.is-show-show-mnemonic-dialog = false;
                 }
             }
 
-            if address-book-add-item-dialog.visible || address-book-qrcode-dialog.visible || address-book-dialog.visible || setting-dialog.visible || oc-dialog.visible || about-dialog.visible || help-dialog.visible || password-dialog.visible || new-account-dialog.visible || show-mnemonic-dialog.visible || tx-detail-dialog.visible || change-password-dialog.visible : low-modal := Blanket { }
-
-            address-book-add-item-dialog := AddressBookAddItemDialog {
-                width: root.dialog-max-width;
-            }
-
-            address-book-qrcode-dialog := AddressBookQrcodeDialog {
-                width: root.dialog-max-width;
-            }
-
-            address-book-dialog := AddressBookDialog {
-                width: root.dialog-max-width;
-            }
-
-            password-dialog := PasswordDialog {}
-
-            change-password-dialog := ChangePasswordDialog {}
-
-            show-mnemonic-dialog := ShowMnemonicDialog {
-                width: root.dialog-max-width;
-            }
-
-            new-account-dialog := NewAccountDialog {
-                width: root.dialog-max-width;
-            }
-
-            tx-detail-dialog := TxDetailDialog {
-                width: root.dialog-max-width;
-            }
+            if setting-dialog.visible || oc-dialog.visible || about-dialog.visible || help-dialog.visible : low-modal := Blanket { }
 
             setting-dialog := SettingDialog {
                 width: root.dialog-max-width;
@@ -147,4 +87,4 @@ export component AppWindow inherits Window {
     }
 }
 
-export { Util, Logic, BaseLogic, Store, Account, ActivityItem, AddressBookItem, TxDetail, Position }
+export { Util, Logic, BaseLogic, Store, Position }

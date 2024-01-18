@@ -3,19 +3,21 @@ import { Store } from "../../store.slint";
 import { Logic } from "../../logic.slint";
 import { IconBtn } from "../../base/icon-btn.slint";
 import { Divider } from "../../base/divider.slint";
-import { Balance } from "./balance.slint";
-import { Tool } from "./tool/panel.slint";
+import { Model } from "./model.slint";
+import { V2T } from "./v2t.slint";
+import { T2V } from "./t2v.slint";
 
 export component Bodyer inherits Rectangle {
-    in-out property receive-address <=> tool.receive-address;
-    in-out property send-amount <=> tool.send-amount;
-    in-out property feerate <=> tool.feerate;
+    Model {
+        visible: Store.current-panel == "model";
+    }
 
-    VerticalLayout {
-        spacing: Theme.spacing;
+    V2T {
+        visible: Store.current-panel == "v2t";
+    }
 
-        Balance {}
-        tool := Tool {}
+    T2V {
+        visible: Store.current-panel == "t2v";
     }
 }
 

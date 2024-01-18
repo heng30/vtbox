@@ -41,6 +41,11 @@ export struct Translation {
     fast: string,
     customer: string,
 
+    model-type: string,
+    model-header-name: string,
+    model-header-size: string,
+    model-header-status: string,
+
     setting-dialog-ui: string,
     setting-dialog-ui-font-size: string,
     setting-dialog-ui-font-family: string,
@@ -142,6 +147,12 @@ export struct Translation {
     tip-max: string,
     tip-new-mnemonic: string,
     tip-browser: string,
+    tip-voice2text: string,
+    tip-text2voice: string,
+    tip-model: string,
+    tip-download: string,
+    tip-refresh: string,
+    tip-import: string,
 
     tip-help: string,
     tip-about: string,
@@ -200,6 +211,11 @@ export global Translator {
             normal: is-cn ? "正常" : "normal",
             fast: is-cn ? "快" : "fast",
             customer: is-cn ? "自定义" : "customer",
+
+            model-type: is-cn ? "模型类型" : "Model type",
+            model-header-name: is-cn ? "名称" : "Name",
+            model-header-size: is-cn ? "大小" : "Size",
+            model-header-status: is-cn ? "状态" : "Status",
 
             setting-dialog-ui: is-cn ? "界面" : "UI",
             setting-dialog-ui-font-size: is-cn ? "字体大小:" : "Font size:",
@@ -302,6 +318,12 @@ export global Translator {
             tip-max: is-cn ? "最大数量" : "Max Value",
             tip-new-mnemonic: is-cn ? "重新生成组记词" : "Renew mnemonic",
             tip-browser: is-cn ? "浏览器" : "Browser",
+            tip-voice2text: is-cn ? "语音转文字" : "Voice2Text",
+            tip-text2voice: is-cn ? "文字转语音" : "Text2Voice",
+            tip-model: is-cn ? "模型" : "Model",
+            tip-download: is-cn ? "下载" : "Download",
+            tip-refresh: is-cn ? "刷新" : "Refresh",
+            tip-import: is-cn ? "导入" : "Import",
 
             tip-help: is-cn ? "帮助" : "Help",
             tip-about: is-cn ? "关于" : "About",

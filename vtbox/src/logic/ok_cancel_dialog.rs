@@ -8,13 +8,9 @@ pub fn init(ui: &AppWindow) {
             let ui = ui_handle.unwrap();
 
             match handle_type.as_str() {
-                "address-book-delete-item" => {
-                    ui.global::<Logic>()
-                        .invoke_address_book_delete_item(handle_uuid);
-                }
-                "activity-delete-item" => {
-                    ui.global::<Logic>()
-                        .invoke_activity_delete_item(handle_uuid);
+                "" => {
+                    // ui.global::<Logic>()
+                    //     .invoke_address_book_delete_item(handle_uuid);
                 }
                 _ => (),
             }

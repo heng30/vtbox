@@ -1,0 +1,142 @@
+import { ComboBox, ListView } from "std-widgets.slint";
+import { Theme } from "../../theme.slint";
+import { Store } from "../../store.slint";
+import { Logic } from "../../logic.slint";
+import { IconBtn } from "../../base/icon-btn.slint";
+import { Divider } from "../../base/divider.slint";
+import { Label } from "../../base/label.slint";
+
+export component Model inherits Rectangle {
+    VerticalLayout {
+        spacing: Theme.spacing * 2;
+
+        HorizontalLayout {
+            spacing: Theme.spacing * 10;
+            HorizontalLayout {
+                Label {
+                    text: Store.translator.model-type + ": ";
+                }
+
+                type-combox := ComboBox {
+                    model: [Store.translator.tip-voice2text, Store.translator.tip-text2voice];
+                    current-value: self.model[0];
+                    current-index: 0;
+
+                    selected => {
+                        vbox.selected-uuid = "";
+                        Logic.switch-model-type(self.current-index);
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: Theme.spacing;
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/download.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-download;
+                    clicked => { }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/import.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-import;
+                    clicked => { }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 0.75;
+                    icon: @image-url("../../images/reset.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-refresh;
+                    clicked => {  }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 0.85;
+                    icon: @image-url("../../images/delete.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-delete;
+                    clicked => {
+                        vbox.selected-uuid = "";
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            border-width: Theme.border-width;
+            border-color: Theme.darker-border-color;
+
+            vbox := VerticalLayout {
+                property <[percent]> label-width: [50%, 20%, 30%];
+                property <string> selected-uuid;
+
+                spacing: Theme.spacing;
+                padding: Theme.padding / 2;
+
+                header := Rectangle {
+                    background: Theme.lighter-border-color;
+
+                    HorizontalLayout {
+                        Label {
+                            width: label-width[0];
+                            text: Store.translator.model-header-name;
+                        }
+                        Label {
+                            width: label-width[1];
+                            text: Store.translator.model-header-size;
+                        }
+                        Label {
+                            width: label-width[2];
+                            text: Store.translator.model-header-status;
+                        }
+                    }
+                }
+
+                ListView {
+                    for data[index] in Store.model-datas : Rectangle {
+
+                        background: vbox.selected-uuid == data.uuid ? Theme.hover-color-dark : (touch.has-hover ? Theme.hover-color : Colors.transparent);
+                        VerticalLayout {
+                            padding-left: Theme.padding;
+
+                            HorizontalLayout {
+                                padding-bottom: Theme.padding * 2;
+
+                                Label {
+                                    width: label-width[0];
+                                    text: data.name;
+                                }
+                                Label {
+                                    width: label-width[1];
+                                    text: data.size;
+                                }
+                                Label {
+                                    width: label-width[2];
+                                    text: data.status;
+                                }
+                            }
+
+
+                        }
+
+                        touch := TouchArea {
+                            mouse-cursor: self.has-hover ? pointer : default;
+                            clicked => { vbox.selected-uuid = data.uuid; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
