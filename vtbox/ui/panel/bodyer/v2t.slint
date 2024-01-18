@@ -1,12 +1,86 @@
+import { LineEdit, ComboBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "../../theme.slint";
 import { Store } from "../../store.slint";
 import { Logic } from "../../logic.slint";
 import { IconBtn } from "../../base/icon-btn.slint";
 import { Divider } from "../../base/divider.slint";
+import { Label } from "../../base/label.slint";
 
 export component V2T inherits Rectangle {
-background: green;
+    property <string> audio-filepath;
+
     VerticalLayout {
         spacing: Theme.spacing;
+
+        HorizontalLayout {
+            spacing: Theme.spacing * 2;
+
+            model-name-combox := ComboBox {
+                model: Store.v2t-models;
+                current-value: self.model[0];
+                current-index: 0;
+            }
+
+            HorizontalLayout {
+                spacing: Theme.spacing;
+
+                audio-name-lineedit := LineEdit {
+                    placeholder-text: Store.translator.filename;
+                    read-only: true;
+                    enabled: false;
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/file-open.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-open;
+                    clicked => {
+                        root.audio-filepath = Logic.open-audio-file-dialog();
+                        // TODO: get the basename
+                        audio-name-lineedit.text = root.audio-filepath;
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: Theme.spacing * 2;
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/copy.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-copy;
+                    clicked => {
+                        Logic.copy-to-clipboard(te.text);
+                    }
+                }
+
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/start-fill.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-start;
+                    clicked => {
+                        Store.v2t-text = "";
+                        Logic.start-v2t(model-name-combox.current-value, root.audio-filepath);
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            border-width: Theme.border-width;
+            border-color: Theme.dark-border-color;
+            te := TextEdit {
+                width: 100%;
+                height: 100%;
+                read-only: true;
+                text: Store.v2t-text;
+            }
+        }
     }
 }

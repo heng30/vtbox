@@ -40,8 +40,8 @@ impl Default for UI {
         Self {
             font_size: 18,
             font_family: "SourceHanSerifCN".to_string(),
-            win_width: 600,
-            win_height: 800,
+            win_width: 800,
+            win_height: 600,
             language: "cn".to_string(),
         }
     }

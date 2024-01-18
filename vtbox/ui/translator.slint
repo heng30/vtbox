@@ -21,6 +21,7 @@ export struct Translation {
     input-password: string,
     please-login: string,
     flushing: string,
+    filename: string,
 
     name-label: string,
     status-label: string,
@@ -42,6 +43,7 @@ export struct Translation {
     customer: string,
 
     model-type: string,
+    model-name: string,
     model-header-name: string,
     model-header-size: string,
     model-header-status: string,
@@ -165,6 +167,9 @@ export struct Translation {
     tip-flush: string,
     tip-zoom-out: string,
     tip-zoom-in: string,
+
+    tip-start: string,
+    tip-open: string,
 }
 
 export global Translator {
@@ -192,6 +197,7 @@ export global Translator {
             input-password: is-cn ? "请输入密码" : "Please input password",
             please-login: is-cn ? "请登陆" : "Please login",
             flushing: is-cn ? "正在刷新..." : "Flush...",
+            filename: is-cn ? "文件名" : "Filename",
 
             name-label: is-cn ? "昵称:" : "Name:",
             status-label: is-cn ? "状态:" : "Status:",
@@ -213,6 +219,7 @@ export global Translator {
             customer: is-cn ? "自定义" : "customer",
 
             model-type: is-cn ? "模型类型" : "Model type",
+            model-name: is-cn ? "模型" : "Model",
             model-header-name: is-cn ? "名称" : "Name",
             model-header-size: is-cn ? "大小" : "Size",
             model-header-status: is-cn ? "状态" : "Status",
@@ -336,6 +343,9 @@ export global Translator {
             tip-flush: is-cn ? "刷新" : "Flush",
             tip-zoom-out: is-cn ? "缩小" : "Zoom Out",
             tip-zoom-in: is-cn ? "放大" : "Zoom In",
+
+            tip-start: is-cn ? "开始" : "Start",
+            tip-open: is-cn ? "打开" : "Open",
         };
     }
 }

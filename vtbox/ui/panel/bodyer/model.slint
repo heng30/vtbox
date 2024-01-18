@@ -3,7 +3,6 @@ import { Theme } from "../../theme.slint";
 import { Store } from "../../store.slint";
 import { Logic } from "../../logic.slint";
 import { IconBtn } from "../../base/icon-btn.slint";
-import { Divider } from "../../base/divider.slint";
 import { Label } from "../../base/label.slint";
 
 export component Model inherits Rectangle {
@@ -30,7 +29,7 @@ export component Model inherits Rectangle {
             }
 
             HorizontalLayout {
-                spacing: Theme.spacing;
+                spacing: Theme.spacing * 2;
 
                 IconBtn {
                     width: Theme.icon-size * 1.33;
@@ -80,7 +79,6 @@ export component Model inherits Rectangle {
                 property <[percent]> label-width: [50%, 20%, 30%];
                 property <string> selected-uuid;
 
-                spacing: Theme.spacing;
                 padding: Theme.padding / 2;
 
                 header := Rectangle {
@@ -125,8 +123,6 @@ export component Model inherits Rectangle {
                                     text: data.status;
                                 }
                             }
-
-
                         }
 
                         touch := TouchArea {
