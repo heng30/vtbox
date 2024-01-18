@@ -65,6 +65,7 @@ export component Model inherits Rectangle {
                     tip-pos: "left";
                     tip-text: Store.translator.tip-delete;
                     clicked => {
+                        Logic.remove-model(type-combox.current-index, vbox.selected-uuid);
                         vbox.selected-uuid = "";
                     }
                 }

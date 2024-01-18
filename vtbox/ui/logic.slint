@@ -23,5 +23,6 @@ export global Logic {
     callback switch-model-type(int); // argument: model-type-index
     callback open-audio-file-dialog() -> string; // return: filepath
     callback start-v2t(string, string); // argument: model-name, audio-filepath
+    callback remove-model(int, string); // argument: model-type-index, uuid
 }
 

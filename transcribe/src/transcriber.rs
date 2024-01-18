@@ -100,7 +100,7 @@ mod tests {
     async fn component_test_happy_case() {
         let expected_result = " By what he is said and done, a man judges himself by what he is willing to do, by what he might have said, or might have done, a judgment that is necessarily hapered, but only by the scope and limits of his imagination, but by the ever-changing measure of his doubt and self-esteem.";
 
-        let tiny_model_handler = model_handler::ModelHandler::new("ggml-tiny.bin", "models", None).await;
+        let tiny_model_handler = model_handler::ModelHandler::new("ggml-tiny.bin", "models", None).await.unwrap();
         let whisper_wrp = Transcriber::new(tiny_model_handler).unwrap();
 
         let result = whisper_wrp

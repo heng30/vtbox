@@ -21,14 +21,14 @@ export component V2T inherits Rectangle {
                 current-index: 0;
             }
 
-            HorizontalLayout {
-                spacing: Theme.spacing;
+            audio-name-lineedit := LineEdit {
+                placeholder-text: Store.translator.filename;
+                read-only: true;
+                enabled: false;
+            }
 
-                audio-name-lineedit := LineEdit {
-                    placeholder-text: Store.translator.filename;
-                    read-only: true;
-                    enabled: false;
-                }
+            HorizontalLayout {
+                spacing: Theme.spacing * 2;
 
                 IconBtn {
                     width: Theme.icon-size * 1.33;
@@ -42,10 +42,18 @@ export component V2T inherits Rectangle {
                         audio-name-lineedit.text = root.audio-filepath;
                     }
                 }
-            }
 
-            HorizontalLayout {
-                spacing: Theme.spacing * 2;
+                IconBtn {
+                    width: Theme.icon-size * 1.33;
+                    icon-width: Theme.icon-size * 1;
+                    icon: @image-url("../../images/clear.svg");
+                    tip-pos: "left";
+                    tip-text: Store.translator.tip-clear;
+                    clicked => {
+                        audio-name-lineedit.text = "";
+                        Store.v2t-text = "";
+                    }
+                }
 
                 IconBtn {
                     width: Theme.icon-size * 1.33;

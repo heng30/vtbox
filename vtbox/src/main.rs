@@ -13,7 +13,7 @@ mod logic;
 mod util;
 mod version;
 
-use logic::{about, clipboard, message, ok_cancel_dialog, setting, window};
+use logic::{about, clipboard, model, message, ok_cancel_dialog, setting, window};
 
 use anyhow::Result;
 use chrono::Local;
@@ -40,6 +40,8 @@ async fn main() -> Result<()> {
     about::init(&ui);
     setting::init(&ui);
     ok_cancel_dialog::init(&ui);
+
+    model::init(&ui);
 
     ui.run().unwrap();
 
