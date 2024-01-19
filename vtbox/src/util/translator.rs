@@ -24,6 +24,8 @@ pub fn tr(text: &str) -> String {
     items.insert("发送失败", "Send failed");
     items.insert("下载成功", "Download success");
     items.insert("下载失败", "Download failed");
+    items.insert("导入失败", "Import failed");
+    items.insert("导入成功", "Import success");
     items.insert("加载失败", "Load failed");
     items.insert("密码错误", "Password Invalid");
     items.insert("正在重试...", "Retrying...");
@@ -40,10 +42,15 @@ pub fn tr(text: &str) -> String {
     items.insert("生成交易失败", "Generate transaction failed");
     items.insert("发送交易成功", "Send transaction success");
     items.insert("发送交易失败", "Send transaction failed");
+    items.insert("打开文件失败", "Open file failed");
     items.insert("非法交易", "Invalid transaction");
     items.insert(
         "内部错误，请刷新列表",
         "Internal error, please refresh the list",
+    );
+    items.insert(
+        "无法删除，文件不存在",
+        "Can not delete file, file is not exist",
     );
     items.insert("刷新...", "Flush...");
     items.insert("在线", "Online");

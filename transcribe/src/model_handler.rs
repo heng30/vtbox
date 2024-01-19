@@ -8,31 +8,20 @@ pub struct ModelHandler {
 }
 
 impl ModelHandler {
-    pub async fn new(
-        model_name: &str,
-        models_dir: &str,
-        proxy_info: Option<(&str, u16)>,
-    ) -> Result<ModelHandler> {
+    pub fn new(model_name: &str, models_dir: &str) -> Result<ModelHandler> {
         let model_handler = ModelHandler {
             model_name: model_name.to_string(),
             models_dir: models_dir.to_string(),
         };
 
-        if model_handler.is_model_existing() {
-            return Ok(model_handler);
+        if !model_handler.is_model_existing() {
+            model_handler.setup_directory()?;
         }
 
-        let _ = model_handler.setup_directory();
-        match model_handler.download_model(proxy_info).await {
-            Err(e) => {
-                let _ = std::fs::remove_file(format!("{}/{}", models_dir, model_name));
-                Err(e)
-            }
-            _ => Ok(model_handler),
-        }
+        Ok(model_handler)
     }
 
-    fn setup_directory(&self) -> Result<()> {
+    pub fn setup_directory(&self) -> Result<()> {
         let path = std::path::Path::new(&self.models_dir);
         if !path.exists() {
             let _ = std::fs::create_dir_all(path)?;
@@ -40,14 +29,14 @@ impl ModelHandler {
         Ok(())
     }
 
-    async fn download_model(&self, proxy_info: Option<(&str, u16)>) -> Result<()> {
+    pub async fn download_model(&self, proxy_info: Option<(&str, u16)>) -> Result<()> {
         if !self.is_model_existing() {
             self.setup_directory()?;
         }
         download_model(&self.models_dir, &self.model_name, proxy_info).await
     }
 
-    fn is_model_existing(&self) -> bool {
+    pub fn is_model_existing(&self) -> bool {
         match std::fs::metadata(format!("{}/{}", self.models_dir, self.model_name)) {
             Ok(_) => true,
             Err(_) => false,
@@ -97,9 +86,7 @@ mod tests {
             let _ = std::fs::create_dir_all(path);
         }
 
-        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None)
-            .await
-            .unwrap();
+        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/").unwrap();
         let result = test_model.is_model_existing();
         assert_eq!(result, true);
     }
@@ -111,9 +98,7 @@ mod tests {
             let _ = std::fs::create_dir_all(path);
         }
 
-        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None)
-            .await
-            .unwrap();
+        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/").unwrap();
         let result = test_model.setup_directory();
         assert_eq!(result.is_ok(), true);
         let _ = std::fs::remove_dir_all("test_models/");
@@ -130,9 +115,7 @@ mod tests {
 
         prep_test_dir();
 
-        let model_handler = ModelHandler::new("ggml-tiny.bin", "test_dir/", None)
-            .await
-            .unwrap();
+        let model_handler = ModelHandler::new("ggml-tiny.bin", "test_dir/").unwrap();
 
         let _result = model_handler.download_model(None).await;
 

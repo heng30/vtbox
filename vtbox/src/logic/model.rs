@@ -8,6 +8,7 @@ use crate::{
 };
 use crate::{message_info, message_success, message_warn};
 use anyhow::Result;
+use native_dialog::FileDialog;
 use slint::{ComponentHandle, Model, VecModel};
 use std::fs;
 use tokio::task::spawn;
@@ -33,29 +34,28 @@ pub fn init(ui: &AppWindow) {
 
             let ui = ui_handle.unwrap();
 
-            for (index, item) in ui.global::<Store>().get_model_datas().iter().enumerate() {
+            for item in ui.global::<Store>().get_model_datas().iter() {
                 if item.uuid != uuid {
                     continue;
                 }
 
-                ui.global::<Store>()
-                    .get_model_datas()
-                    .as_any()
-                    .downcast_ref::<VecModel<ModelItem>>()
-                    .expect("We know we set a VecModel earlier")
-                    .remove(index);
+                if item.status == "Undownload" {
+                    message_warn!(&ui, tr("无法删除，文件不存在"));
+                    break;
+                }
 
                 let file = format!(
                     "{}/{}/{}",
                     config::cache_dir(),
-                    model_type(type_index),
+                    model_relative_path(type_index),
                     item.name
                 );
                 let _ = fs::remove_file(file);
+
+                init_model(&ui, type_index);
+                message_success!(ui, tr("删除成功"));
                 break;
             }
-
-            message_success!(ui, tr("删除成功"));
         });
 
     let ui_handle = ui.as_weak();
@@ -108,12 +108,43 @@ pub fn init(ui: &AppWindow) {
                 }
             });
         });
+
+    let ui_handle = ui.as_weak();
+    ui.global::<Logic>().on_import_model(move |type_index| {
+        let ui = ui_handle.unwrap();
+
+        match FileDialog::new().set_location("~").show_open_single_file() {
+            Ok(Some(file)) => {
+                let path = format!(
+                    "{}/{}/{}",
+                    config::cache_dir(),
+                    model_relative_path(type_index),
+                    file.file_name().unwrap().to_str().unwrap(),
+                );
+
+                match fs::copy(file, &path) {
+                    Err(e) => {
+                        message_warn!(&ui, format!("{}. {}: {e:?}", tr("导入失败"), tr("原因")));
+                    }
+                    _ => {
+                        init_model(&ui, type_index);
+                        message_success!(&ui, tr("导入成功"));
+                    }
+                }
+            }
+            Err(e) => {
+                message_warn!(&ui, format!("{}. {}: {e:?}", tr("导入失败"), tr("原因")));
+            }
+
+            _ => (),
+        };
+    });
 }
 
 fn init_model(ui: &AppWindow, type_index: i32) {
     let cache_dir = config::cache_dir();
-    let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_type(0)));
-    let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_type(1)));
+    let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_relative_path(0)));
+    let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_relative_path(1)));
 
     let items = match model_items(type_index) {
         Ok(v) => v,
@@ -130,7 +161,7 @@ fn init_model(ui: &AppWindow, type_index: i32) {
         .set_vec(items);
 }
 
-fn model_type(type_index: i32) -> String {
+fn model_relative_path(type_index: i32) -> String {
     if type_index == 0 {
         "v2t/model".to_string()
     } else {
@@ -140,7 +171,11 @@ fn model_type(type_index: i32) -> String {
 
 async fn inner_download_model(type_index: i32, name: &str) -> Result<()> {
     let proxy_config = config::socks5();
-    let path = format!("{}/{}", config::cache_dir(), model_type(type_index));
+    let path = format!(
+        "{}/{}",
+        config::cache_dir(),
+        model_relative_path(type_index)
+    );
     let proxy_info = if proxy_config.enabled {
         Some((proxy_config.url.as_str(), proxy_config.port))
     } else {
@@ -151,7 +186,11 @@ async fn inner_download_model(type_index: i32, name: &str) -> Result<()> {
 }
 
 fn model_items(type_index: i32) -> Result<Vec<ModelItem>> {
-    let path = format!("{}/{}", config::cache_dir(), model_type(type_index));
+    let path = format!(
+        "{}/{}",
+        config::cache_dir(),
+        model_relative_path(type_index)
+    );
 
     let mut models = fs::read_dir(path)?
         .filter_map(|entry| {
