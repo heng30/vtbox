@@ -30,6 +30,7 @@ pub fn tr(text: &str) -> String {
     items.insert("密码错误", "Password Invalid");
     items.insert("正在重试...", "Retrying...");
     items.insert("正在下载...", "Downloading...");
+    items.insert("正在转换...", "Converting...");
     items.insert("不支持下载", "Not support download");
     items.insert("创建账户成功", "Create account success");
     items.insert("创建账户失败", "Create account failed");
@@ -52,6 +53,10 @@ pub fn tr(text: &str) -> String {
         "无法删除，文件不存在",
         "Can not delete file, file is not exist",
     );
+    items.insert("转换成功", "transcribe success");
+    items.insert("转换失败", "transcribe failed");
+    items.insert("请先下载模型", "Please download the models");
+    items.insert("有任务正在运行，稍后重试", "Other task in running, try it latter");
     items.insert("刷新...", "Flush...");
     items.insert("在线", "Online");
     items.insert("正忙", "Busy");

@@ -68,7 +68,7 @@ pub fn init(ui: &AppWindow) {
 
         timer.start(
             TimerMode::SingleShot,
-            std::time::Duration::from_secs(2),
+            std::time::Duration::from_secs(3),
             move || {
                 ui.global::<Store>().set_message(MessageItem {
                     text: "".into(),

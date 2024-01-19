@@ -1,6 +1,7 @@
 import { LineEdit, ComboBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "../../theme.slint";
 import { Store } from "../../store.slint";
+import { Util } from "../../util.slint";
 import { Logic } from "../../logic.slint";
 import { IconBtn } from "../../base/icon-btn.slint";
 import { Divider } from "../../base/divider.slint";
@@ -25,7 +26,6 @@ export component V2T inherits Rectangle {
             audio-name-lineedit := LineEdit {
                 placeholder-text: Store.translator.filename;
                 read-only: true;
-                enabled: false;
             }
 
             HorizontalLayout {
@@ -38,9 +38,8 @@ export component V2T inherits Rectangle {
                     tip-pos: "left";
                     tip-text: Store.translator.tip-open;
                     clicked => {
-                        root.audio-filepath = Logic.open-audio-file-dialog();
-                        // TODO: get the basename
-                        audio-name-lineedit.text = root.audio-filepath;
+                        root.audio-filepath = Logic.open-audio-file();
+                        audio-name-lineedit.text = Util.filename(root.audio-filepath);
                     }
                 }
 

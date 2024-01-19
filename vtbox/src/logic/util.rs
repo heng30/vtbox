@@ -25,4 +25,7 @@ pub fn init(ui: &AppWindow) {
                 .join(sep.as_str())
                 .into()
         });
+
+    ui.global::<Util>()
+        .on_filename(move |path| util::fs::filename(&path).unwrap_or("".to_string()).into());
 }

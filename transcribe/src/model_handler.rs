@@ -1,6 +1,5 @@
 use anyhow::Result;
 use reqwest::{Client, Proxy};
-use std::time::Duration;
 
 pub struct ModelHandler {
     model_name: String, // list of downloaded models
@@ -65,7 +64,6 @@ pub async fn download_model(
 
     let response = client
         .get(&url)
-        .timeout(Duration::from_secs(30))
         .send()
         .await?;
 

@@ -26,9 +26,8 @@ export global Logic {
     callback import-model(int); // argument: model-type-index
     callback download-model(int, string); // argument: model-type-index, uuid
 
-
-    callback open-audio-file-dialog() -> string; // return: filepath
-    callback start-v2t(string, string); // argument: model-name, audio-filepath
+    callback open-audio-file() -> string; // return: filepath
+    callback start-v2t(string, string); // argument: model-name, audio-path
 
 
 }

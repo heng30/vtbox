@@ -19,6 +19,9 @@ export global Util {
     pure callback split-and-join-string(string, int, string) -> string;
     split-and-join-string(input, length, sep) => { return input; }
 
+    pure callback filename(string) -> string;
+    filename(path) => { return path; }
+
     public pure function text-color(type: string) -> color {
        if (type == "success") {
            return Theme.success-color;
@@ -46,14 +49,6 @@ export global Util {
             return "https://blockstream.info/address/" + address;
         } else {
             return "https://blockstream.info/testnet/address/" + address;
-        }
-    }
-
-    public pure function blockstream-txid-url(network: string, txid: string) -> string {
-        if (network == "main") {
-            return "https://blockstream.info/tx/" + txid;
-        } else {
-            return "https://blockstream.info/testnet/tx/" + txid;
         }
     }
 }

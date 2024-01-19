@@ -9,7 +9,7 @@ use crate::{
 use crate::{message_info, message_success, message_warn};
 use anyhow::Result;
 use native_dialog::FileDialog;
-use slint::{ComponentHandle, Model, VecModel};
+use slint::{ComponentHandle, Model, SharedString, VecModel};
 use std::fs;
 use tokio::task::spawn;
 use uuid::Uuid;
@@ -146,13 +146,14 @@ fn init_model(ui: &AppWindow, type_index: i32) {
     let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_relative_path(0)));
     let _ = std::fs::create_dir_all(format!("{}/{}", cache_dir, model_relative_path(1)));
 
-    let items = match model_items(type_index) {
+    let items = match model_items(ui, type_index) {
         Ok(v) => v,
         Err(e) => {
             log::warn!("get model items error: {e:?}");
             vec![]
         }
     };
+
     ui.global::<Store>()
         .get_model_datas()
         .as_any()
@@ -161,7 +162,7 @@ fn init_model(ui: &AppWindow, type_index: i32) {
         .set_vec(items);
 }
 
-fn model_relative_path(type_index: i32) -> String {
+pub fn model_relative_path(type_index: i32) -> String {
     if type_index == 0 {
         "v2t/model".to_string()
     } else {
@@ -185,7 +186,7 @@ async fn inner_download_model(type_index: i32, name: &str) -> Result<()> {
     model_handler::download_model(&path, name, proxy_info).await
 }
 
-fn model_items(type_index: i32) -> Result<Vec<ModelItem>> {
+fn model_items(ui: &AppWindow, type_index: i32) -> Result<Vec<ModelItem>> {
     let path = format!(
         "{}/{}",
         config::cache_dir(),
@@ -217,6 +218,7 @@ fn model_items(type_index: i32) -> Result<Vec<ModelItem>> {
         })
         .collect();
 
+    set_combobox_models(ui, type_index, &models);
     append_undownload_model(type_index, &mut models);
     Ok(models)
 }
@@ -268,4 +270,20 @@ fn append_undownload_model(type_index: i32, models: &mut Vec<ModelItem>) {
         }
     }
     models.append(&mut tmp_items);
+}
+
+fn set_combobox_models(ui: &AppWindow, type_index: i32, models: &Vec<ModelItem>) {
+    let items = models
+        .iter()
+        .map(|item| item.name.clone())
+        .collect::<Vec<_>>();
+
+    if type_index == 0 {
+        ui.global::<Store>()
+            .get_v2t_models()
+            .as_any()
+            .downcast_ref::<VecModel<SharedString>>()
+            .expect("We know we set a VecModel earlier")
+            .set_vec(items);
+    }
 }
