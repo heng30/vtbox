@@ -8,9 +8,10 @@ pub fn init(ui: &AppWindow) {
             let ui = ui_handle.unwrap();
 
             match handle_type.as_str() {
-                "" => {
-                    // ui.global::<Logic>()
-                    //     .invoke_address_book_delete_item(handle_uuid);
+                "remove-model" => {
+                    let items: Vec<&str> = handle_uuid.split(',').collect();
+                    ui.global::<Logic>()
+                        .invoke_remove_model(items[0].parse::<_>().unwrap(), items[1].into());
                 }
                 _ => (),
             }

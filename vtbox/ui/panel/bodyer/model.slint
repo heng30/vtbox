@@ -37,7 +37,9 @@ export component Model inherits Rectangle {
                     icon: @image-url("../../images/download.svg");
                     tip-pos: "left";
                     tip-text: Store.translator.tip-download;
-                    clicked => { }
+                    clicked => {
+                        Logic.download-model(type-combox.current-index, vbox.selected-uuid);
+                    }
                 }
 
                 IconBtn {
@@ -46,7 +48,9 @@ export component Model inherits Rectangle {
                     icon: @image-url("../../images/import.svg");
                     tip-pos: "left";
                     tip-text: Store.translator.tip-import;
-                    clicked => { }
+                    clicked => {
+                        Logic.import-model(type-combox.current-index);
+                    }
                 }
 
                 IconBtn {
@@ -55,17 +59,24 @@ export component Model inherits Rectangle {
                     icon: @image-url("../../images/reset.svg");
                     tip-pos: "left";
                     tip-text: Store.translator.tip-refresh;
-                    clicked => {  }
+                    clicked => {
+                        Logic.refresh-model(type-combox.current-index);
+                    }
                 }
 
                 IconBtn {
                     width: Theme.icon-size * 1.33;
                     icon-width: Theme.icon-size * 0.85;
-                    icon: @image-url("../../images/delete.svg");
+                    icon: @image-url("../../images/delete-light.svg");
                     tip-pos: "left";
                     tip-text: Store.translator.tip-delete;
                     clicked => {
-                        Logic.remove-model(type-combox.current-index, vbox.selected-uuid);
+                        Store.ok-cancel-dialog-setting.title-type = "warning";
+                        Store.ok-cancel-dialog-setting.title-text = Store.translator.warning;
+                        Store.ok-cancel-dialog-setting.body-text = Store.translator.delete-or-not;
+                        Store.ok-cancel-dialog-setting.handle-type = "remove-model";
+                        Store.ok-cancel-dialog-setting.handle-uuid = type-combox.current-index + "," + vbox.selected-uuid;
+
                         vbox.selected-uuid = "";
                     }
                 }

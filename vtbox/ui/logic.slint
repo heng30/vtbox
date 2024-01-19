@@ -21,8 +21,15 @@ export global Logic {
     callback setting-ok(SettingDialogConfig);
 
     callback switch-model-type(int); // argument: model-type-index
+    callback remove-model(int, string); // argument: model-type-index, uuid
+    callback refresh-model(int); // argument: model-type-index
+    callback import-model(int); // argument: model-type-index
+    callback download-model(int, string); // argument: model-type-index, uuid
+
+
     callback open-audio-file-dialog() -> string; // return: filepath
     callback start-v2t(string, string); // argument: model-name, audio-filepath
-    callback remove-model(int, string); // argument: model-type-index, uuid
+
+
 }
 

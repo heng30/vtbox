@@ -40,6 +40,13 @@ impl ModelHandler {
         Ok(())
     }
 
+    async fn download_model(&self, proxy_info: Option<(&str, u16)>) -> Result<()> {
+        if !self.is_model_existing() {
+            self.setup_directory()?;
+        }
+        download_model(&self.models_dir, &self.model_name, proxy_info).await
+    }
+
     fn is_model_existing(&self) -> bool {
         match std::fs::metadata(format!("{}/{}", self.models_dir, self.model_name)) {
             Ok(_) => true,
@@ -47,37 +54,36 @@ impl ModelHandler {
         }
     }
 
-    pub async fn download_model(&self, proxy_info: Option<(&str, u16)>) -> Result<()> {
-        if !self.is_model_existing() {
-            self.setup_directory()?;
-        }
-
-        let base_url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main";
-        let url = format!("{}/{}", base_url, &self.model_name);
-
-        let client = if let Some((ip, port)) = proxy_info {
-            let proxy = Proxy::all(format!("socks5://{}:{}", ip, port))?;
-            Client::builder().proxy(proxy).build()?
-        } else {
-            Client::new()
-        };
-
-        let response = client
-            .get(&url)
-            .timeout(Duration::from_secs(30))
-            .send()
-            .await?;
-
-        let mut file =
-            std::fs::File::create(format!("{}/{}", &self.models_dir, &self.model_name))?;
-        let mut content = std::io::Cursor::new(response.bytes().await?);
-        std::io::copy(&mut content, &mut file)?;
-        Ok(())
-    }
-
     pub fn get_model_dir(&self) -> String {
         format!("{}/{}", &self.models_dir, &self.model_name)
     }
+}
+
+pub async fn download_model(
+    models_dir: &str,
+    model_name: &str,
+    proxy_info: Option<(&str, u16)>,
+) -> Result<()> {
+    let base_url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main";
+    let url = format!("{}/{}", base_url, model_name);
+
+    let client = if let Some((ip, port)) = proxy_info {
+        let proxy = Proxy::all(format!("socks5://{}:{}", ip, port))?;
+        Client::builder().proxy(proxy).build()?
+    } else {
+        Client::new()
+    };
+
+    let response = client
+        .get(&url)
+        .timeout(Duration::from_secs(30))
+        .send()
+        .await?;
+
+    let mut file = std::fs::File::create(format!("{}/{}", models_dir, model_name))?;
+    let mut content = std::io::Cursor::new(response.bytes().await?);
+    std::io::copy(&mut content, &mut file)?;
+    Ok(())
 }
 
 #[cfg(test)]
@@ -91,7 +97,9 @@ mod tests {
             let _ = std::fs::create_dir_all(path);
         }
 
-        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None).await.unwrap();
+        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None)
+            .await
+            .unwrap();
         let result = test_model.is_model_existing();
         assert_eq!(result, true);
     }
@@ -103,7 +111,9 @@ mod tests {
             let _ = std::fs::create_dir_all(path);
         }
 
-        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None).await.unwrap();
+        let test_model = ModelHandler::new("ggml-tiny.bin", "test_models/", None)
+            .await
+            .unwrap();
         let result = test_model.setup_directory();
         assert_eq!(result.is_ok(), true);
         let _ = std::fs::remove_dir_all("test_models/");
@@ -120,7 +130,9 @@ mod tests {
 
         prep_test_dir();
 
-        let model_handler = ModelHandler::new("ggml-tiny.bin", "test_dir/", None).await.unwrap();
+        let model_handler = ModelHandler::new("ggml-tiny.bin", "test_dir/", None)
+            .await
+            .unwrap();
 
         let _result = model_handler.download_model(None).await;
 

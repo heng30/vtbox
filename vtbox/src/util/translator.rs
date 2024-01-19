@@ -28,6 +28,7 @@ pub fn tr(text: &str) -> String {
     items.insert("密码错误", "Password Invalid");
     items.insert("正在重试...", "Retrying...");
     items.insert("正在下载...", "Downloading...");
+    items.insert("不支持下载", "Not support download");
     items.insert("创建账户成功", "Create account success");
     items.insert("创建账户失败", "Create account failed");
     items.insert("密码错误", "Wrong password");
@@ -40,6 +41,10 @@ pub fn tr(text: &str) -> String {
     items.insert("发送交易成功", "Send transaction success");
     items.insert("发送交易失败", "Send transaction failed");
     items.insert("非法交易", "Invalid transaction");
+    items.insert(
+        "内部错误，请刷新列表",
+        "Internal error, please refresh the list",
+    );
     items.insert("刷新...", "Flush...");
     items.insert("在线", "Online");
     items.insert("正忙", "Busy");

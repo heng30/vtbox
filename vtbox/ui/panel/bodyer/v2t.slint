@@ -16,6 +16,7 @@ export component V2T inherits Rectangle {
             spacing: Theme.spacing * 2;
 
             model-name-combox := ComboBox {
+                width: 40%;
                 model: Store.v2t-models;
                 current-value: self.model[0];
                 current-index: 0;
