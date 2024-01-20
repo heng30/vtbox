@@ -52,6 +52,7 @@ export component V2T inherits Rectangle {
                     clicked => {
                         audio-name-lineedit.text = "";
                         Store.v2t-text = "";
+                        Store.v2t-convert-time = "00:00";
                     }
                 }
 
@@ -76,6 +77,10 @@ export component V2T inherits Rectangle {
                         Store.v2t-text = "";
                         Logic.start-v2t(model-name-combox.current-value, root.audio-filepath);
                     }
+                }
+
+                if Store.v2t-convert-time != "" : Label {
+                    text: Store.v2t-convert-time;
                 }
             }
         }

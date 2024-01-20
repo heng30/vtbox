@@ -23,7 +23,7 @@ impl ModelHandler {
     pub fn setup_directory(&self) -> Result<()> {
         let path = std::path::Path::new(&self.models_dir);
         if !path.exists() {
-            let _ = std::fs::create_dir_all(path)?;
+            std::fs::create_dir_all(path)?;
         }
         Ok(())
     }
@@ -36,10 +36,7 @@ impl ModelHandler {
     }
 
     pub fn is_model_existing(&self) -> bool {
-        match std::fs::metadata(format!("{}/{}", self.models_dir, self.model_name)) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
+        std::fs::metadata(format!("{}/{}", self.models_dir, self.model_name)).is_ok()
     }
 
     pub fn get_model_dir(&self) -> String {
@@ -62,10 +59,7 @@ pub async fn download_model(
         Client::new()
     };
 
-    let response = client
-        .get(&url)
-        .send()
-        .await?;
+    let response = client.get(&url).send().await?;
 
     let mut file = std::fs::File::create(format!("{}/{}", models_dir, model_name))?;
     let mut content = std::io::Cursor::new(response.bytes().await?);

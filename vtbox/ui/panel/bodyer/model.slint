@@ -6,6 +6,8 @@ import { IconBtn } from "../../base/icon-btn.slint";
 import { Label } from "../../base/label.slint";
 
 export component Model inherits Rectangle {
+    in-out property model-type-index <=> type-combox.current-index;
+
     VerticalLayout {
         spacing: Theme.spacing * 2;
 

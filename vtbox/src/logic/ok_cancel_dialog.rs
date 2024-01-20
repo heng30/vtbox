@@ -1,6 +1,7 @@
 use crate::slint_generatedAppWindow::{AppWindow, Logic};
 use slint::ComponentHandle;
 
+#[allow(clippy::single_match)]
 pub fn init(ui: &AppWindow) {
     let ui_handle = ui.as_weak();
     ui.global::<Logic>()

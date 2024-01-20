@@ -5,13 +5,15 @@ use crate::{
     message::async_message_warn,
     model::model_relative_path,
     transcribe::{model_handler, transcriber},
+    util,
 };
 use crate::{message_info, message_success, message_warn};
 use anyhow::Result;
+use chrono::Local;
 use native_dialog::FileDialog;
 use slint::{ComponentHandle, Model, SharedString};
-use tokio::task::spawn;
 use std::sync::atomic::{AtomicBool, Ordering};
+use tokio::task::spawn;
 
 static IS_CONVERTING: AtomicBool = AtomicBool::new(false);
 
@@ -59,12 +61,42 @@ pub fn init(ui: &AppWindow) {
 
             message_info!(ui, tr("正在转换..."));
 
-            let (ui, model_name, audio_path) =
-                (ui.as_weak(), model_name.to_string(), audio_path.to_string());
+            let (ui, ui_timer, model_name, audio_path) = (
+                ui.as_weak(),
+                ui.as_weak(),
+                model_name.to_string(),
+                audio_path.to_string(),
+            );
+
+            IS_CONVERTING.store(true, Ordering::SeqCst);
 
             spawn(async move {
-                IS_CONVERTING.store(true, Ordering::SeqCst);
+                let start_timestamp = Local::now().timestamp();
+                loop {
+                    if !IS_CONVERTING.load(Ordering::SeqCst) {
+                        return;
+                    }
 
+                    let diff_timestamp = Local::now().timestamp() - start_timestamp;
+                    let time = match util::time::from_timestamp(diff_timestamp, "%M:%S") {
+                        Ok(v) => v,
+                        Err(e) => {
+                            log::warn!("{e:?}");
+                            return;
+                        }
+                    };
+
+                    let ui = ui_timer.clone();
+                    let _ = slint::invoke_from_event_loop(move || {
+                        let ui = ui.unwrap();
+                        ui.global::<Store>().set_v2t_convert_time(time.into());
+                    });
+
+                    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                }
+            });
+
+            spawn(async move {
                 match inner_start_v2t(&model_name, &audio_path) {
                     Err(e) => async_message_warn(
                         ui.clone(),

@@ -8,7 +8,9 @@ import { V2T } from "./v2t.slint";
 import { T2V } from "./t2v.slint";
 
 export component Bodyer inherits Rectangle {
-    Model {
+    in-out property model-type-index <=> model.model-type-index;
+
+    model := Model {
         visible: Store.current-panel == "model";
     }
 

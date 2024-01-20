@@ -32,10 +32,11 @@ pub fn remove_dir_files(path: &str) -> io::Result<()> {
 pub fn filename(path: &str) -> Option<String> {
     match Path::new(path).file_name() {
         None => None,
-        Some(v) => match v.to_str() {
-            None => None,
-            Some(v) => Some(v.to_string()),
-        },
+        Some(v) => v.to_str().map(|v| v.to_string()),
+        // Some(v) => match v.to_str() {
+        //     None => None,
+        //     Some(v) => Some(v.to_string()),
+        // },
     }
 }
 

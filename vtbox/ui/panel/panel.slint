@@ -6,6 +6,8 @@ import { Bodyer } from "./bodyer/panel.slint";
 import { Divider } from "../base/divider.slint";
 
 export component Panel inherits Rectangle {
+    in-out property model-type-index <=> bodyer.model-type-index;
+
     header := Header {
         x: 0; y: 0; z: 1;
     }

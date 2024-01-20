@@ -26,6 +26,7 @@ macro_rules! message_info {
     };
 }
 
+#[allow(dead_code)]
 pub fn async_message_warn(ui: Weak<AppWindow>, msg: String) {
     let _ = slint::invoke_from_event_loop(move || {
         ui.unwrap()
@@ -34,6 +35,7 @@ pub fn async_message_warn(ui: Weak<AppWindow>, msg: String) {
     });
 }
 
+#[allow(dead_code)]
 pub fn async_message_success(ui: Weak<AppWindow>, msg: String) {
     let _ = slint::invoke_from_event_loop(move || {
         ui.unwrap()

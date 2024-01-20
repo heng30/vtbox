@@ -8,6 +8,8 @@ extern crate serde_derive;
 #[macro_use]
 extern crate lazy_static;
 
+extern crate transcribe;
+
 mod config;
 mod logic;
 mod util;
@@ -20,7 +22,6 @@ use chrono::Local;
 use env_logger::fmt::Color as LColor;
 use log::debug;
 use std::io::Write;
-use transcribe;
 
 #[tokio::main]
 async fn main() -> Result<()> {

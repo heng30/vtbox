@@ -21,6 +21,7 @@ export component AppWindow inherits Window {
     forward-focus: fscope;
     title: "vtbox";
 
+    in-out property model-type-index <=> panel.model-type-index;
     property<length> dialog-max-width: Math.min(root.width * 0.95, Theme.dialog-max-width);
 
     init => { }

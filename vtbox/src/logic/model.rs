@@ -1,17 +1,13 @@
 use crate::slint_generatedAppWindow::{AppWindow, Logic, ModelItem, Store};
 use crate::util::translator::tr;
-use crate::{
-    config,
-    message::{async_message_success, async_message_warn},
-    transcribe::model_handler,
-    util,
-};
+use crate::{config, message::async_message_warn, util};
 use crate::{message_info, message_success, message_warn};
 use anyhow::Result;
 use native_dialog::FileDialog;
 use slint::{ComponentHandle, Model, SharedString, VecModel};
 use std::fs;
 use tokio::task::spawn;
+use transcribe::model_handler;
 use uuid::Uuid;
 
 const PREDEFINED_MODELS_V2T: [&str; 5] = [
@@ -104,7 +100,16 @@ pub fn init(ui: &AppWindow) {
                         ui.clone(),
                         format!("{}. {}: {e:?}", tr("下载失败"), tr("原因")),
                     ),
-                    _ => async_message_success(ui.clone(), tr("下载成功")),
+                    _ => {
+                        let _ = slint::invoke_from_event_loop(move || {
+                            let ui = ui.clone().unwrap();
+                            if type_index == ui.get_model_type_index() {
+                                init_model(&ui, type_index);
+                            }
+
+                            message_success!(ui, tr("下载成功"));
+                        });
+                    }
                 }
             });
         });
@@ -122,7 +127,7 @@ pub fn init(ui: &AppWindow) {
                     file.file_name().unwrap().to_str().unwrap(),
                 );
 
-                match fs::copy(file, &path) {
+                match fs::copy(file, path) {
                     Err(e) => {
                         message_warn!(&ui, format!("{}. {}: {e:?}", tr("导入失败"), tr("原因")));
                     }
@@ -193,7 +198,7 @@ fn model_items(ui: &AppWindow, type_index: i32) -> Result<Vec<ModelItem>> {
         model_relative_path(type_index)
     );
 
-    let mut models = fs::read_dir(path)?
+    let mut models: Vec<_> = fs::read_dir(path)?
         .filter_map(|entry| {
             let entry = entry.ok()?;
             let path = entry.path();
@@ -235,31 +240,22 @@ fn is_in_predefined_models(type_index: i32, name: &str) -> bool {
     false
 }
 
-fn is_in_models(items: &Vec<ModelItem>, name: &str) -> bool {
-    for item in items.iter() {
-        if item.name == name {
-            return true;
-        }
-    }
-
-    return false;
+fn is_in_models(items: &[ModelItem], name: &str) -> bool {
+    items.iter().any(|item| item.name == name)
 }
 
 fn get_model_data(ui: &AppWindow, uuid: &str) -> Option<ModelItem> {
-    for item in ui.global::<Store>().get_model_datas().iter() {
-        if item.uuid == uuid {
-            return Some(item);
-        }
-    }
-
-    None
+    ui.global::<Store>()
+        .get_model_datas()
+        .iter()
+        .find(|item| item.uuid == uuid)
 }
 
 fn append_undownload_model(type_index: i32, models: &mut Vec<ModelItem>) {
     let mut tmp_items = vec![];
     if type_index == 0 {
         for name in PREDEFINED_MODELS_V2T {
-            if !is_in_models(&models, name) {
+            if !is_in_models(models, name) {
                 tmp_items.push(ModelItem {
                     uuid: Uuid::new_v4().to_string().into(),
                     name: name.into(),
@@ -272,7 +268,7 @@ fn append_undownload_model(type_index: i32, models: &mut Vec<ModelItem>) {
     models.append(&mut tmp_items);
 }
 
-fn set_combobox_models(ui: &AppWindow, type_index: i32, models: &Vec<ModelItem>) {
+fn set_combobox_models(ui: &AppWindow, type_index: i32, models: &[ModelItem]) {
     let items = models
         .iter()
         .map(|item| item.name.clone())
