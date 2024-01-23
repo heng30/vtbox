@@ -1,4 +1,4 @@
-![screenshot](./screenshot/vtbox.png)
+<img src="./screenshot/vtbox.png" width="100"/>
 
 [中文文档](./README.zh-CN.md)
 

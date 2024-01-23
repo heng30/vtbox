@@ -1,4 +1,4 @@
-![screenshot](./screenshot/vtbox.png)
+<img src="./screenshot/vtbox.png" width="100"/>
 
 [English Documentation](./README.md)
 
