@@ -19,7 +19,7 @@ export component Model inherits Rectangle {
                 }
 
                 type-combox := ComboBox {
-                    model: [Store.translator.tip-voice2text, Store.translator.tip-text2voice];
+                    model: [Store.translator.tip-voice2text, /* Store.translator.tip-text2voice */ ];
                     current-value: self.model[0];
                     current-index: 0;
 

@@ -37,14 +37,14 @@ export component Header inherits Rectangle {
                     clicked => { Store.current-panel = "v2t"; }
                 }
 
-                IconBtn {
-                    width: Theme.icon-size * 1.33;
-                    icon-width: Theme.icon-size * 0.85;
-                    icon: @image-url("../images/text-T.svg");
-                    tip-pos: "bottom";
-                    tip-text: Store.translator.tip-text2voice;
-                    clicked => { Store.current-panel = "t2v"; }
-                }
+                // IconBtn {
+                //     width: Theme.icon-size * 1.33;
+                //     icon-width: Theme.icon-size * 0.85;
+                //     icon: @image-url("../images/text-T.svg");
+                //     tip-pos: "bottom";
+                //     tip-text: Store.translator.tip-text2voice;
+                //     clicked => { Store.current-panel = "t2v"; }
+                // }
 
             }
         }
